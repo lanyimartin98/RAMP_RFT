@@ -1,6 +1,6 @@
 <?php 
-require_once('database.php');
-require_once('auth.php');
+require_once('../database.php');
+require_once('../auth/auth.php');
 $request_method=$_SERVER["REQUEST_METHOD"];
 $headers = apache_request_headers();
 switch($request_method) {

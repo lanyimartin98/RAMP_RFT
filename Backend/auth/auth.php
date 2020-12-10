@@ -1,5 +1,5 @@
 <?php 
-require_once('database.php');
+require_once('../database.php');
 function generateToken(){
 $token = openssl_random_pseudo_bytes(16);
 $token = bin2hex($token);

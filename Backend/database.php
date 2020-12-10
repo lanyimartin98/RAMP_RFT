@@ -1,13 +1,12 @@
 <?php
 function connect(){
-require_once('auth.php');
+require_once('auth/auth.php');
 $dsn = "mysql:host=localhost;dbname=used_cars";
 $user = "root";
 $passwd = "";
 
 try {
   $conn = new PDO($dsn,$user,$passwd);
-  // set the PDO error mode to exception
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   return $conn;
 } catch(PDOException $e) {
@@ -78,7 +77,7 @@ function addCar(){
         $input['engine_capacity'], $input['horsepower'], $input['wheel_driven'], $input['transmission'], 
         $input['advertiser_id'], $input['picture']));
         header('Content-Type: application/json');
-    }catch(Exception $e){
+    }catch(PDOException $e){
         echo json_encode($e);
         header('Content-Type: application/json');
     }
