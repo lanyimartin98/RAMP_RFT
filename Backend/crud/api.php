@@ -20,7 +20,8 @@ switch($request_method) {
         break;
     case 'PUT':
         if(checkToken()){
-        echo "Great Success";
+        $id=$_GET["id"];
+        updateCarByID($id);
         }
         break;
     case 'DELETE':

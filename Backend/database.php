@@ -95,7 +95,21 @@ function deleteCarByID($id){
     }
 }
 function updateCarByID($id){
-    
+    $input = json_decode(file_get_contents('php://input'), true);
+    $conn=connect();
+    $sql="UPDATE cars SET name=?, price=?, year_of_production=?,state=?,body_style=?,milage=?,
+    doors=?,type_of_gas=?,engine_capacity=?,horsepower=?,wheel_driven=?,transmission=?,picture=? WHERE id=?";
+    try{
+        $conn->prepare($sql)->
+        execute(array($input['name'], $input['price'], $input['year_of_production'], 
+        $input['state'], $input['body_style'], $input['milage'], $input['doors'], $input['type_of_gas'], 
+        $input['engine_capacity'], $input['horsepower'], $input['wheel_driven'], $input['transmission'], 
+        $input['picture'],$id));
+        header('Content-Type: application/json');
+    }catch(PDOException $e){
+        echo json_encode($e);
+        header('Content-Type: application/json');
+    }
 }
 function getUser(){
     $input = json_decode(file_get_contents('php://input'), true);
