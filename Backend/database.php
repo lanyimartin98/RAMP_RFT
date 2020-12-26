@@ -11,7 +11,6 @@ try {
   return $conn;
 } catch(PDOException $e) {
   echo "Connection failed: " . $e->getMessage();
-  
 }
 }
 function getAllCars(){
@@ -71,27 +70,51 @@ function addCar(){
     $sql="INSERT INTO cars (id, name, price, year_of_production, state, body_style, milage, doors, type_of_gas, engine_capacity, horsepower, wheel_driven, transmission, advertiser_id, picture) 
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     try{
-        $conn->prepare($sql)->
+        if($conn->prepare($sql)->
         execute(array(NULL, $input['name'], $input['price'], $input['year_of_production'], 
         $input['state'], $input['body_style'], $input['milage'], $input['doors'], $input['type_of_gas'], 
         $input['engine_capacity'], $input['horsepower'], $input['wheel_driven'], $input['transmission'], 
-        $input['advertiser_id'], $input['picture']));
-        header('Content-Type: application/json');
+        $input['advertiser_id'], $input['picture']))){
+            $response=array();
+            $response['status']=1;
+            $response['message']="Inserted successfully!";
+            header('Content-Type: application/json');
+            echo(json_encode($response));
+        }
+        else{
+            $response=array();
+            $response['status']=0;
+            $response['message']="Insert failed!";
+            header('Content-Type: application/json');
+            echo(json_encode($response));
+            
+        }   
     }catch(PDOException $e){
-        echo json_encode($e);
-        header('Content-Type: application/json');
+        header("HTTP/1.1 400 Bad request");
     }
 }
 function deleteCarByID($id){
     $conn=connect();
     $sql="DELETE FROM cars WHERE id=$id";
     try{
-        $result=$conn->query($sql);
-        echo json_encode($result);
+        if($result=$conn->query($sql))
+        {
+        $response=array();
+        $response['status']=1;
+        $response['message']="Deleted successfully!";
         header('Content-Type: application/json');
+        echo(json_encode($response));
+    }
+    else{
+        $response=array();
+        $response['status']=0;
+        $response['message']="Delete failed!";
+        header('Content-Type: application/json');
+        echo(json_encode($response));
+        
+    }   
     }catch(Exception $e){
-        echo json_encode($e);
-        header('Content-Type: application/json');
+        header("HTTP/1.1 400 Bad request");
     }
 }
 function updateCarByID($id){
@@ -100,15 +123,28 @@ function updateCarByID($id){
     $sql="UPDATE cars SET name=?, price=?, year_of_production=?,state=?,body_style=?,milage=?,
     doors=?,type_of_gas=?,engine_capacity=?,horsepower=?,wheel_driven=?,transmission=?,picture=? WHERE id=?";
     try{
-        $conn->prepare($sql)->
+        if($conn->prepare($sql)->
         execute(array($input['name'], $input['price'], $input['year_of_production'], 
         $input['state'], $input['body_style'], $input['milage'], $input['doors'], $input['type_of_gas'], 
         $input['engine_capacity'], $input['horsepower'], $input['wheel_driven'], $input['transmission'], 
-        $input['picture'],$id));
-        header('Content-Type: application/json');
+        $input['picture'],$id))){
+            $response=array();
+            $response['status']=1;
+            $response['message']="Updated successfully!";
+            header('Content-Type: application/json');
+            echo(json_encode($response));
+        }
+        else{
+            $response=array();
+            $response['status']=0;
+            $response['message']="Updated failed!";
+            header('Content-Type: application/json');
+            echo(json_encode($response));
+            
+        }   
+        
     }catch(PDOException $e){
-        echo json_encode($e);
-        header('Content-Type: application/json');
+        header("HTTP/1.1 400 Bad request");
     }
 }
 function getUser(){
@@ -126,11 +162,19 @@ function getUser(){
         $sql="UPDATE users SET token=? WHERE username=?";
         $stmt=$conn->prepare($sql);
         $stmt->execute(array($token,$username));
-        echo(json_encode($token));
+        $response=array();
+        $response['username']=$username;
+        $response['token']=$token;
+        $response['status']=1;
+        $response['message']="Authenctication successfull!";
+        echo(json_encode($response));
         header('Content-Type: application/json');
     } else {
         header('Content-Type: application/json');
-        header('Status: 401');
+        $response=array();
+        $response['status']=0;
+        $response['message']="Authenctication failed!";
+        echo(json_encode($response));
   }
 }
 function getToken($token){
@@ -150,7 +194,20 @@ function crashToken($token){
     $conn=connect();
     $sql="UPDATE users SET token=null WHERE token=?";
     $stmt=$conn->prepare($sql);
-    $stmt->execute(array($token));
+    if($stmt->execute(array($token))){
+        $response=array();
+        $response['status']=1;
+        $response['message']="Logout successful!";
+        header('Content-Type: application/json');
+        echo(json_encode($response));
+    }
+    else{
+        $response=array();
+        $response['status']=1;
+        $response['message']="Logout failed!";
+        header('Content-Type: application/json');
+        echo(json_encode($response));
+    }
 }
 
 ?>
